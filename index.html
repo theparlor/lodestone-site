@@ -144,6 +144,212 @@
   </div>
 </div></section>
 
+<section id="diagrams">
+<style>
+  #diagrams .diag-pair{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:32px}
+  #diagrams .diag-block{background:var(--ground-2);border:1px solid var(--line);border-radius:12px;padding:22px 20px 18px}
+  #diagrams .diag-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--brass);font-weight:600;margin-bottom:12px;font-family:'Spectral'}
+  @media(max-width:760px){#diagrams .diag-pair{grid-template-columns:1fr}}
+</style>
+<div class="wrap">
+  <div class="kicker">How it comes to be &middot; where it lives</div>
+  <h2>Two views of the machine.</h2>
+  <p class="body">The first diagram traces how a single Lodestone recall unfolds &mdash; from raw text through nomic-embed to the sqlite-vec index, then ranked hits back to you. The second shows where Lodestone sits in the portfolio: Witness as the write-spine, Conduit as the federation transport, and the Intent loop that governs it all.</p>
+
+  <div class="diag-pair">
+
+    <!-- DIAGRAM 1: FLOW — How it comes to be -->
+    <div class="diag-block">
+      <div class="diag-label">How it comes to be</div>
+      <svg viewBox="0 0 480 310" width="100%" height="auto" style="max-width:480px;display:block" xmlns="http://www.w3.org/2000/svg" aria-label="Flow diagram: how a Lodestone recall works">
+        <defs>
+          <linearGradient id="ls-flow" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E8772B"/>
+            <stop offset="100%" stop-color="#7E8A98"/>
+          </linearGradient>
+          <marker id="ls-arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#C9A45C" opacity="0.75"/>
+          </marker>
+          <marker id="ls-arr-steel" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#7E8A98" opacity="0.75"/>
+          </marker>
+          <marker id="ls-arr-ember" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#F2A24A" opacity="0.8"/>
+          </marker>
+        </defs>
+
+        <!-- Row 1: Ingest pipeline (top) -->
+        <!-- Node: Corpus sources -->
+        <rect x="8" y="38" width="76" height="48" rx="7" fill="#2b2219" stroke="#C9A45C" stroke-width="1.2"/>
+        <text x="46" y="57" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#ECE3D4">memory</text>
+        <text x="46" y="68" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#ECE3D4">cast · catalog</text>
+        <text x="46" y="79" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#ECE3D4">signals</text>
+        <text x="46" y="29" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#9A7F4E" font-style="italic">corpora</text>
+
+        <!-- Arrow →  nomic-embed -->
+        <line x1="84" y1="62" x2="102" y2="62" stroke="#C9A45C" stroke-width="1.4" marker-end="url(#ls-arr)"/>
+
+        <!-- Node: nomic-embed -->
+        <rect x="104" y="44" width="80" height="36" rx="7" fill="#211a13" stroke="#E8772B" stroke-width="1.4"/>
+        <text x="144" y="59" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="9" fill="#F2A24A">nomic-embed</text>
+        <text x="144" y="72" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#9A7F4E">local · no cloud</text>
+
+        <!-- Arrow → sqlite-vec -->
+        <line x1="184" y1="62" x2="202" y2="62" stroke="#C9A45C" stroke-width="1.4" marker-end="url(#ls-arr)"/>
+
+        <!-- Node: sqlite-vec index -->
+        <rect x="204" y="38" width="86" height="48" rx="7" fill="#2b2219" stroke="#C9A45C" stroke-width="1.2"/>
+        <text x="247" y="57" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="9" fill="#ECE3D4">sqlite-vec</text>
+        <text x="247" y="69" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">vector index</text>
+        <text x="247" y="80" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#85795F">~/.context/lodestone/</text>
+        <!-- read-only badge -->
+        <rect x="212" y="88" width="70" height="14" rx="4" fill="rgba(201,164,92,0.12)" stroke="#9A7F4E" stroke-width="0.8"/>
+        <text x="247" y="98" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7" fill="#C9A45C">read-only invariant</text>
+
+        <!-- Ingest label -->
+        <text x="155" y="124" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#85795F" font-style="italic">ingest (write-once)</text>
+
+        <!-- Separator rule -->
+        <line x1="20" y1="136" x2="460" y2="136" stroke="#3a2f23" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="240" y="132" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#3a2f23" font-style="italic">recall boundary</text>
+
+        <!-- Row 2: Recall pipeline (bottom) -->
+        <!-- Node: plain-language query -->
+        <rect x="8" y="148" width="80" height="44" rx="7" fill="#2b2219" stroke="#C9A45C" stroke-width="1.2"/>
+        <text x="48" y="166" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="9" fill="#ECE3D4">your question</text>
+        <text x="48" y="178" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#B3A890">plain language</text>
+
+        <!-- Arrow → embed query -->
+        <line x1="88" y1="170" x2="106" y2="170" stroke="#C9A45C" stroke-width="1.4" marker-end="url(#ls-arr)"/>
+
+        <!-- Node: embed query vector -->
+        <rect x="108" y="152" width="80" height="36" rx="7" fill="#211a13" stroke="#E8772B" stroke-width="1.4"/>
+        <text x="148" y="167" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#F2A24A">embed query</text>
+        <text x="148" y="180" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#9A7F4E">→ query vector</text>
+
+        <!-- Arrow → cosine search -->
+        <line x1="188" y1="170" x2="206" y2="170" stroke="#C9A45C" stroke-width="1.4" marker-end="url(#ls-arr)"/>
+
+        <!-- Node: cosine search -->
+        <rect x="208" y="148" width="82" height="44" rx="7" fill="#2b2219" stroke="#C9A45C" stroke-width="1.2"/>
+        <text x="249" y="166" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="9" fill="#ECE3D4">cosine search</text>
+        <text x="249" y="178" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">sqlite-vec</text>
+        <text x="249" y="188" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#85795F">corpus unmodified</text>
+
+        <!-- Arrow → ranked hits -->
+        <line x1="290" y1="170" x2="308" y2="170" stroke="#E8772B" stroke-width="1.6" marker-end="url(#ls-arr-ember)"/>
+
+        <!-- Node: ranked hits -->
+        <rect x="310" y="148" width="82" height="44" rx="7" fill="#17120e" stroke="#E8772B" stroke-width="1.4"/>
+        <text x="351" y="166" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="9" fill="#ECE3D4">ranked hits</text>
+        <text x="351" y="178" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#F2A24A">score · slug</text>
+        <text x="351" y="188" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#9A7F4E">source citation</text>
+
+        <!-- Arrow → you -->
+        <line x1="392" y1="170" x2="406" y2="170" stroke="#E8772B" stroke-width="1.4" marker-end="url(#ls-arr-ember)"/>
+
+        <!-- Node: you -->
+        <rect x="408" y="152" width="50" height="36" rx="7" fill="#17120e" stroke="#7E8A98" stroke-width="1.2"/>
+        <text x="433" y="169" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="10" fill="#AAB4C0">You</text>
+        <text x="433" y="181" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#7E8A98">&lt;1 sec</text>
+
+        <!-- Bottom label -->
+        <text x="240" y="230" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#85795F">Corpus &rarr; nomic-embed &rarr; sqlite-vec &nbsp;|&nbsp; Query &rarr; embed &rarr; cosine search &rarr; ranked hits</text>
+
+        <!-- "never writes back" annotation -->
+        <text x="240" y="246" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#9A7F4E" font-style="italic">recall never writes back to corpus &mdash; index is projection only</text>
+      </svg>
+    </div>
+
+    <!-- DIAGRAM 2: ARCHITECTURE — Where it lives -->
+    <div class="diag-block">
+      <div class="diag-label">Where it lives</div>
+      <svg viewBox="0 0 480 310" width="100%" height="auto" style="max-width:480px;display:block" xmlns="http://www.w3.org/2000/svg" aria-label="Architecture diagram: Lodestone position in the portfolio">
+        <defs>
+          <linearGradient id="ag-lodestone" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#E8772B" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="#2b2219" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="ag-witness" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C9A45C" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#211a13" stop-opacity="0.8"/>
+          </linearGradient>
+          <marker id="la-arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#C9A45C" opacity="0.8"/>
+          </marker>
+          <marker id="la-arr-out" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#E8772B" opacity="0.8"/>
+          </marker>
+          <marker id="la-arr-steel" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#7E8A98" opacity="0.7"/>
+          </marker>
+        </defs>
+
+        <!-- Intent loop veil — faint background rectangle -->
+        <rect x="10" y="14" width="460" height="254" rx="12" fill="none" stroke="#3a2f23" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="26" y="28" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#3a2f23" font-style="italic">Intent loop &mdash; Notice &middot; Spec &middot; Execute &middot; Observe</text>
+
+        <!-- Witness box — left (write-spine) -->
+        <rect x="24" y="82" width="100" height="118" rx="10" fill="url(#ag-witness)" stroke="#C9A45C" stroke-width="1.3"/>
+        <text x="74" y="105" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="13" font-weight="700" fill="#C9A45C">Witness</text>
+        <line x1="44" y1="113" x2="104" y2="113" stroke="#3a2f23" stroke-width="0.8"/>
+        <text x="74" y="128" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">write-spine</text>
+        <text x="74" y="141" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">append-only</text>
+        <text x="74" y="154" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">events store</text>
+        <text x="74" y="190" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#85795F" font-style="italic">WRITE sibling</text>
+
+        <!-- Lodestone box — centre (READ sibling) -->
+        <rect x="170" y="70" width="138" height="150" rx="10" fill="url(#ag-lodestone)" stroke="#E8772B" stroke-width="1.8"/>
+        <text x="239" y="97" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="15" font-weight="800" fill="#ECE3D4">Lodestone</text>
+        <line x1="188" y1="106" x2="290" y2="106" stroke="#3a2f23" stroke-width="0.8"/>
+        <text x="239" y="121" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">Awareness</text>
+        <text x="239" y="134" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8.5" fill="#B3A890">READ sibling</text>
+        <!-- conservation law badge -->
+        <rect x="186" y="148" width="106" height="16" rx="5" fill="rgba(232,119,43,0.10)" stroke="#9A7F4E" stroke-width="0.8"/>
+        <text x="239" y="159" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#C9A45C">recall-is-projection law</text>
+        <!-- local-first badge -->
+        <rect x="194" y="170" width="90" height="14" rx="4" fill="rgba(201,164,92,0.08)" stroke="#9A7F4E" stroke-width="0.7"/>
+        <text x="239" y="180" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7" fill="#C9A45C">local-first · no cloud</text>
+        <!-- two modes -->
+        <text x="239" y="200" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#85795F">ranked recall</text>
+        <text x="239" y="212" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#85795F">surgical recall</text>
+
+        <!-- Conduit box — below Witness (federation, P2) -->
+        <rect x="24" y="216" width="100" height="36" rx="8" fill="#211a13" stroke="#9A7F4E" stroke-width="1"/>
+        <text x="74" y="230" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="11" font-weight="700" fill="#7E8A98">Conduit</text>
+        <text x="74" y="244" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#85795F">federation · P2</text>
+
+        <!-- You box — right -->
+        <rect x="358" y="110" width="98" height="60" rx="9" fill="#211a13" stroke="#7E8A98" stroke-width="1.2"/>
+        <text x="407" y="134" text-anchor="middle" font-family="'Playfair Display',Georgia,serif" font-size="13" font-weight="700" fill="#AAB4C0">You</text>
+        <text x="407" y="149" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#7E8A98">Claude · Hermes</text>
+        <text x="407" y="162" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#7E8A98">OpenClaw</text>
+
+        <!-- Witness → Lodestone arrow (READ reads from WRITE) -->
+        <line x1="124" y1="134" x2="168" y2="134" stroke="#C9A45C" stroke-width="1.4" marker-end="url(#la-arr)"/>
+        <text x="146" y="128" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#9A7F4E" font-style="italic">reads</text>
+
+        <!-- Conduit ↔ Witness dashed line (federation pipe) -->
+        <line x1="74" y1="200" x2="74" y2="216" stroke="#9A7F4E" stroke-width="1" stroke-dasharray="3,3"/>
+        <!-- sibling label for Conduit/Witness -->
+        <path d="M124,234 Q168,250 170,200" fill="none" stroke="#3a2f23" stroke-width="0.8" stroke-dasharray="3,3"/>
+        <text x="152" y="260" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7" fill="#3a2f23" font-style="italic">P2 transport</text>
+
+        <!-- Lodestone → You arrow (output) -->
+        <line x1="308" y1="140" x2="356" y2="140" stroke="#E8772B" stroke-width="1.6" marker-end="url(#la-arr-out)"/>
+        <text x="332" y="134" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="7.5" fill="#9A7F4E" font-style="italic">recall</text>
+
+        <!-- Intent loop cycle arrow on right edge -->
+        <path d="M460,40 Q470,149 460,258" fill="none" stroke="#3a2f23" stroke-width="1" stroke-dasharray="4,5" marker-end="url(#la-arr)"/>
+
+        <!-- Bottom label -->
+        <text x="239" y="290" text-anchor="middle" font-family="Spectral,Georgia,serif" font-size="8" fill="#85795F">Witness (write) &rarr; Lodestone (read) &rarr; You &nbsp;&nbsp;&middot;&nbsp;&nbsp; Conduit federates across surfaces (P2)</text>
+      </svg>
+    </div>
+
+  </div>
+</div></section>
+
 <section id="veil" class="veil-section"><div class="wrap">
   <div class="kicker">Behind the veil</div>
   <h2>How Lodestone was forged.</h2>
